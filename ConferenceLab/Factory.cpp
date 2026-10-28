@@ -12,3 +12,10 @@ Base* createObject(int type) {
     default: throw AppError("Неизвестный тип объекта.");
     }
 }
+
+Base* createObject(const std::string& type) {
+    if (type == "Speaker") return createObject(1);
+    if (type == "Administrator") return createObject(2);
+    if (type == "ProgramItem") return createObject(3);
+    throw AppError("Неизвестный тип записи в файле: " + type);
+}

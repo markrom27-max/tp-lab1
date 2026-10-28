@@ -2,6 +2,8 @@
 #include "AppError.h"
 #include <iostream>
 #include <utility>
+#include <memory>
+#include "Factory.h"
 
 Keeper::Keeper() : items(nullptr), count(0), capacity(0) {
     std::cout << "[Keeper] конструктор без параметров\n";
@@ -81,4 +83,30 @@ const Base& Keeper::operator[](int index) const {
 }
 Base& Keeper::operator[](int index) {
     return const_cast<Base&>(static_cast<const Keeper&>(*this)[index]);
+}
+
+
+void Keeper::save(std::ostream& out) const {
+    out << count << '\n';
+    for (int i = 0; i < count; ++i) {
+        out << items[i]->type() << '\n';
+        items[i]->save(out);
+    }
+    if (!out) throw AppError("Не удалось записать контейнер.");
+}
+
+void Keeper::load(std::istream& in) {
+    int size;
+    if (!(in >> size) || size < 0)
+        throw AppError("Неверное количество записей в файле.");
+    Keeper loaded;
+    for (int i = 0; i < size; ++i) {
+        std::string type;
+        if (!(in >> type)) throw AppError("Файл неожиданно закончился.");
+        std::unique_ptr<Base> item(createObject(type));
+        item->load(in);
+        loaded.add(item.get());
+        item.release();
+    }
+    swap(loaded);
 }

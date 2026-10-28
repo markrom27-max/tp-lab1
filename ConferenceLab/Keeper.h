@@ -22,4 +22,6 @@ public:
     void clear() noexcept;
     Base& operator[](int index);
     const Base& operator[](int index) const;
+    void save(std::ostream& out) const;
+    void load(std::istream& in);
 };

@@ -4,6 +4,9 @@
 #include "AppError.h"
 #include <iostream>
 #include <memory>
+#include <fstream>
+#include <iomanip>
+#include <filesystem>
 
 Conference::Conference() : name("Без названия") {
     std::cout << "[Conference] конструктор без параметров\n";
@@ -48,4 +51,35 @@ void Conference::print(std::ostream& out, int filter) const {
         }
     }
     if (!found) out << "Записей нет.\n";
+}
+
+
+void Conference::save(const std::string& path) const {
+    Input::checkText(path);
+    std::ofstream file(std::filesystem::u8path(path));
+    if (!file) throw AppError("Не удалось открыть файл для записи.");
+    file << "CONFERENCE 1\n" << std::quoted(name) << '\n';
+    records.save(file);
+    file.close();
+    if (!file) throw AppError("Ошибка записи или закрытия файла.");
+}
+
+void Conference::load(const std::string& path) {
+    Input::checkText(path);
+    std::ifstream file(std::filesystem::u8path(path));
+    if (!file) throw AppError("Не удалось открыть файл для чтения.");
+    std::string signature;
+    std::getline(file, signature);
+    if (signature != "CONFERENCE 1")
+        throw AppError("Неверный формат или версия файла.");
+    std::string newName;
+    if (!(file >> std::quoted(newName)))
+        throw AppError("Не удалось прочитать название конференции.");
+    // Читаем во временный объект: ошибка не затронет текущие данные.
+    Conference loaded(newName);
+    loaded.records.load(file);
+    file >> std::ws;
+    if (!file.eof()) throw AppError("Лишние данные в конце файла.");
+    name.swap(loaded.name);
+    records.swap(loaded.records);
 }

@@ -1,6 +1,8 @@
 ﻿#include "Administrator.h"
 #include "Input.h"
 #include <iostream>
+#include <iomanip>
+#include "AppError.h"
 
 Administrator::Administrator()
     : position("Не задано"), responsibility("Не задано") {
@@ -56,4 +58,23 @@ void Administrator::print(std::ostream& out) const {
     out << "Администрация\nФИО: " << getName()
         << "\nДолжность: " << position
         << "\nОбласть ответственности: " << responsibility << '\n';
+}
+
+void Administrator::save(std::ostream& out) const {
+    out << std::quoted(getName()) << '\n'
+        << std::quoted(position) << '\n'
+        << std::quoted(responsibility) << '\n';
+}
+void Administrator::load(std::istream& in) {
+    std::string newname, newposition, newresponsibility;
+    if (!(in >> std::quoted(newname)
+        >> std::quoted(newposition)
+        >> std::quoted(newresponsibility)))
+        throw AppError("Недостаточно полей в файле.");
+    Input::checkText(newname);
+    Input::checkText(newposition);
+    Input::checkText(newresponsibility);
+    setName(newname);
+    setPosition(newposition);
+    setResponsibility(newresponsibility);
 }

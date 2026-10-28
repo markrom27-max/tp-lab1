@@ -1,6 +1,8 @@
 ﻿#include "ProgramItem.h"
 #include "Input.h"
 #include <iostream>
+#include <iomanip>
+#include "AppError.h"
 
 ProgramItem::ProgramItem()
     : day("Не задано"), time("00:00") {
@@ -57,4 +59,24 @@ void ProgramItem::print(std::ostream& out) const {
     out << "Программа\nНаименование выступления: " << getName()
         << "\nДень (например, 25.10.2026): " << day
         << "\nВремя (ЧЧ:ММ): " << time << '\n';
+}
+
+void ProgramItem::save(std::ostream& out) const {
+    out << std::quoted(getName()) << '\n'
+        << std::quoted(day) << '\n'
+        << std::quoted(time) << '\n';
+}
+void ProgramItem::load(std::istream& in) {
+    std::string newname, newday, newtime;
+    if (!(in >> std::quoted(newname)
+        >> std::quoted(newday)
+        >> std::quoted(newtime)))
+        throw AppError("Недостаточно полей в файле.");
+    Input::checkTime(newtime);
+    Input::checkText(newname);
+    Input::checkText(newday);
+    Input::checkText(newtime);
+    setName(newname);
+    setDay(newday);
+    setTime(newtime);
 }

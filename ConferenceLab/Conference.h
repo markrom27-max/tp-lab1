@@ -18,4 +18,6 @@ public:
     Keeper& getRecords();
     const Keeper& getRecords() const;
     void print(std::ostream& out, int filter = 0) const;
+    void save(const std::string& path) const;
+    void load(const std::string& path);
 };

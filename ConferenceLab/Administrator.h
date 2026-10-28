@@ -21,4 +21,6 @@ public:
     Base* clone() const override;
     void input(std::istream& in, std::ostream& out) override;
     void print(std::ostream& out) const override;
+    void save(std::ostream& out) const override;
+    void load(std::istream& in) override;
 };

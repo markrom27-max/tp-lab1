@@ -1,6 +1,8 @@
 ﻿#include "Speaker.h"
 #include "Input.h"
 #include <iostream>
+#include <iomanip>
+#include "AppError.h"
 
 Speaker::Speaker()
     : organization("Не задано"), report("Не задано"), annotation("Не задано") {
@@ -70,4 +72,27 @@ void Speaker::print(std::ostream& out) const {
         << "\nОрганизация или ВУЗ: " << organization
         << "\nТема доклада: " << report
         << "\nАннотация: " << annotation << '\n';
+}
+
+void Speaker::save(std::ostream& out) const {
+    out << std::quoted(getName()) << '\n'
+        << std::quoted(organization) << '\n'
+        << std::quoted(report) << '\n'
+        << std::quoted(annotation) << '\n';
+}
+void Speaker::load(std::istream& in) {
+    std::string newname, neworganization, newreport, newannotation;
+    if (!(in >> std::quoted(newname)
+        >> std::quoted(neworganization)
+        >> std::quoted(newreport)
+        >> std::quoted(newannotation)))
+        throw AppError("Недостаточно полей в файле.");
+    Input::checkText(newname);
+    Input::checkText(neworganization);
+    Input::checkText(newreport);
+    Input::checkText(newannotation);
+    setName(newname);
+    setOrganization(neworganization);
+    setReport(newreport);
+    setAnnotation(newannotation);
 }

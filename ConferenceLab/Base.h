@@ -17,6 +17,8 @@ public:
     virtual Base* clone() const = 0;
     virtual void input(std::istream& in, std::ostream& out) = 0;
     virtual void print(std::ostream& out) const = 0;
+    virtual void save(std::ostream& out) const = 0;
+    virtual void load(std::istream& in) = 0;
     friend std::ostream& operator<<(std::ostream& out,
         const Base& object);
 };

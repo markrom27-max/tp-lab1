@@ -21,10 +21,11 @@ int main() {
             std::cout << "\n1 Добавить  2 Просмотр  3 Изменить\n"
                 << "4 Удалить   5 Копировать запись\n"
                 << "6 Переименовать  7 Копия конференции\n"
-                        << "0 Выход\n";
+                << "8 Сохранить  9 Загрузить\n"
+                << "0 Выход\n";
             try {
                 int command = Input::number(std::cin, std::cout,
-                    "Действие: ", 0, 7);
+                    "Действие: ", 0, 9);
                 if (command == 0) break;
                 Keeper& keeper = conference.getRecords();
                 if (command == 1) {
@@ -65,6 +66,14 @@ int main() {
                     Conference copy(conference);
                     copy.print(std::cout);
                     std::cout << "Копия создана и будет уничтожена.\n";
+                } else if (command == 8) {
+                    conference.save(Input::text(std::cin, std::cout,
+                        "Имя файла для сохранения: "));
+                    std::cout << "Данные сохранены.\n";
+                } else if (command == 9) {
+                    conference.load(Input::text(std::cin, std::cout,
+                        "Имя файла для загрузки: "));
+                    std::cout << "Данные восстановлены.\n";
                 }
             } catch (const std::exception& error) {
                 std::cout << "Ошибка: " << error.what() << '\n';
